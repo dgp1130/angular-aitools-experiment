@@ -9,7 +9,7 @@
     "build:rest": "npm run -s build:devtools_page && npm run -s build:content_script && npm run -s build:injection && npm run -s build:manifest",
     "build:devtools_page": "cp -r devtools/ dist/angular-aitools/browser/devtools/",
     "build:content_script": "cp -r content_script/ dist/angular-aitools/browser/content_script/",
-    "build:injection": "cp -r injection/ dist/angular-aitools/browser/injection/",
+    "build:injection": "tsc -p tsconfig.injection.json --outdir dist/angular-aitools/browser/injection/",
     "build:manifest": "cp manifest.json dist/angular-aitools/browser/",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
