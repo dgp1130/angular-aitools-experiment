@@ -6,5 +6,17 @@
     "permissions": ["scripting", "activeTab"],
     "host_permissions": [
         "<all_urls>"
+    ],
+    "content_scripts": [
+        {
+            "js": ["content_script/index.js"],
+            "matches": ["<all_urls>"]
+        }
+    ],
+    "web_accessible_resources": [
+        {
+            "resources": ["injection/*"],
+            "matches": ["<all_urls>"]
+        }
     ]
 }
