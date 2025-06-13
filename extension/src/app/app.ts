@@ -41,11 +41,15 @@ export class App implements OnInit, OnDestroy {
   protected async submit(evt: SubmitEvent): Promise<void> {
     evt.preventDefault();
 
+    const analysis = this.analysis();
+    if (!analysis) throw new Error('Expected analysis to be completed.');
+
     const form = evt.target as HTMLFormElement;
     const formData = new FormData(form);
     const prompt = formData.get('prompt')!;
 
-    const response = await this.ai.generate(prompt.toString());
-    this.response.set(response);
+    for await (const chunk of this.ai.generate(prompt.toString(), analysis)) {
+      this.response.update((res) => res + chunk);
+    }
   }
 }
