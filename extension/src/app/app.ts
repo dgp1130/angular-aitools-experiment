@@ -2,6 +2,7 @@ import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { MessageBus } from '../message_bus';
 import { Subscription } from 'rxjs';
 import { Analysis } from '../../injection/analyzer';
+import { AI } from '../ai';
 
 @Component({
   selector: 'app-root',
@@ -9,6 +10,7 @@ import { Analysis } from '../../injection/analyzer';
   styleUrl: './app.css'
 })
 export class App implements OnInit, OnDestroy {
+  private readonly ai = inject(AI);
   private readonly messageBus = inject(MessageBus);
 
   protected readonly response = signal<string>('');
@@ -43,11 +45,7 @@ export class App implements OnInit, OnDestroy {
     const formData = new FormData(form);
     const prompt = formData.get('prompt')!;
 
-    const response = await sendPrompt(prompt.toString());
+    const response = await this.ai.generate(prompt.toString());
     this.response.set(response);
   }
-}
-
-async function sendPrompt(prompt: string): Promise<string> {
-  return prompt;
 }
