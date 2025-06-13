@@ -6,10 +6,11 @@
     "build": "npm run -s build:dev",
     "build:dev": "ng build --configuration development && npm run -s build:rest",
     "build:prod": "ng build && npm run -s build:devtools_page && npm run -s build:rest",
-    "build:rest": "npm run -s build:devtools_page && npm run -s build:content_script && npm run -s build:injection && npm run -s build:manifest",
+    "build:rest": "npm run -s build:devtools_page && npm run -s build:content_script && npm run -s build:injection && npm run -s build:service_worker && npm run -s build:manifest",
     "build:devtools_page": "cp -r devtools/ dist/angular-aitools/browser/devtools/",
     "build:content_script": "cp -r content_script/ dist/angular-aitools/browser/content_script/",
     "build:injection": "tsc -p tsconfig.injection.json --outdir dist/angular-aitools/browser/injection/",
+    "build:service_worker": "cp -r service_worker/ dist/angular-aitools/browser/service_worker/",
     "build:manifest": "cp manifest.json dist/angular-aitools/browser/",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"

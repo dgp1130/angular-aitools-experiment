@@ -7,12 +7,19 @@
     "host_permissions": [
         "<all_urls>"
     ],
+    "background": {
+        "service_worker": "service_worker/index.js",
+        "type": "module"
+    },
     "content_scripts": [
         {
             "js": ["content_script/index.js"],
             "matches": ["<all_urls>"]
         }
     ],
+    "externally_connectable": {
+        "matches": ["<all_urls>"]
+    },
     "web_accessible_resources": [
         {
             "resources": ["injection/*"],

@@ -5,7 +5,7 @@
 
 <form action="#" (submit)="submit($event)">
     <textarea name="prompt" aria-label="Prompt"></textarea>
-    <button type="submit">Submit</button>
+    <button type="submit" [disabled]="!analysis()">Submit</button>
 </form>
 
 <article>{{response()}}</article>
