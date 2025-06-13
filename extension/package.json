@@ -4,8 +4,9 @@
   "scripts": {
     "ng": "ng",
     "build": "npm run -s build:dev",
-    "build:dev": "ng build --configuration development && npm run -s build:manifest",
-    "build:prod": "ng build && npm run -s build:manifest",
+    "build:dev": "ng build --configuration development && npm run -s build:devtools_page && npm run -s build:manifest",
+    "build:prod": "ng build && npm run -s build:devtools_page && npm run -s build:manifest",
+    "build:devtools_page": "cp -r devtools/ dist/angular-aitools/browser/devtools/",
     "build:manifest": "cp manifest.json dist/angular-aitools/browser/",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
