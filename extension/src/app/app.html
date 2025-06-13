@@ -1,1 +1,11 @@
-<h2>Hello, World!</h2>
+<div id="heading">
+    <h2>Ask me anything!</h2>
+    <aside>(About this Angular app...)</aside>
+</div>
+
+<form action="#" (submit)="submit($event)">
+    <textarea name="prompt" aria-label="Prompt"></textarea>
+    <button type="submit">Submit</button>
+</form>
+
+<article>{{response()}}</article>

@@ -1,0 +1,21 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+h2 {
+    margin-block-end: 0;
+}
+
+textarea {
+    display: block;
+    margin-bottom: 1rem;
+    width: 400px;
+    height: 200px;
+    resize: none;
+}
+
+article {
+    font-family: monospace;
+}
