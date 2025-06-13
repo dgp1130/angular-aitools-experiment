@@ -3,8 +3,10 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
+    "build": "npm run -s build:dev",
+    "build:dev": "ng build --configuration development && npm run -s build:manifest",
+    "build:prod": "ng build && npm run -s build:manifest",
+    "build:manifest": "cp manifest.json dist/angular-aitools/browser/",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
