@@ -1,4 +1,5 @@
 import { Component, signal } from '@angular/core';
+import { analyzeFrame } from '../analyzer';
 
 @Component({
   selector: 'app-root',
@@ -14,6 +15,9 @@ export class App {
     const form = evt.target as HTMLFormElement;
     const formData = new FormData(form);
     const prompt = formData.get('prompt')!;
+
+    const analysis = await analyzeFrame(chrome.devtools.inspectedWindow.tabId);
+    console.log(analysis);
 
     const response = await sendPrompt(prompt.toString());
     this.response.set(response);
