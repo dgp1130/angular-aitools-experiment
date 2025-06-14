@@ -10,8 +10,9 @@ export class AI {
         apiKey: API_KEY,
     });
 
-    async *generate(prompt: string, analysis: Analysis): AsyncGenerator<string, void, void> {
-        const fullPrompt = wrapInSystemPrompt(prompt, analysis);
+    async *generate(prompt: string, analysis: Analysis, logs: unknown[][]):
+            AsyncGenerator<string, void, void> {
+        const fullPrompt = wrapInSystemPrompt(prompt, analysis, logs);
         console.log(fullPrompt); // DEBUG
 
         const res = await this.ai.models.generateContentStream({
@@ -25,7 +26,7 @@ export class AI {
     }
 }
 
-function wrapInSystemPrompt(prompt: string, analysis: Analysis): string {
+function wrapInSystemPrompt(prompt: string, analysis: Analysis, logs: unknown[][]): string {
     return `
 You are an AI advisor for the Angular web framework. You have access to a
 particular Angular app running in development mode with extra diagnostics provided
@@ -37,6 +38,10 @@ which provides a few injection tokens. Use this information to answer questions
 about the application's injection hierarchy.
 
 ${printAnalysis(analysis)}
+
+The page also emitted the following logs which the user may ask about:
+
+${printLogs(logs)}
 
 Based on the above information, see the following user prompt and respond accordingly:
 
@@ -54,4 +59,8 @@ function printAnalysis(analysis: Analysis): string {
     return providers.map((tree) => tree.print(({ tagName, providers }) => `
 ${tagName} provides ${providers.join(', ')}
     `.trim())).join('\n');
+}
+
+function printLogs(logs: unknown[][]): string {
+    return logs.map((args) => args.join(' - ')).join('\n');
 }

@@ -21,14 +21,10 @@ interface NgGlobal {
     ɵgetInjectorProviders(injector: Injector): ProviderRecord[];
 }
 
-const ng = (globalThis as any).ng as NgGlobal;
-
 /** Analyzes the current page. */
-export async function analyze(): Promise<Analysis> {
-    const root = document.querySelector('[ng-version]');
-    if (!root) throw new Error('Could not find Angular application.');
-
-    const providers = walkProviders(walkInjectors(walkDom(root)));
+export async function analyze(root: Element): Promise<Analysis> {
+    const ng = (globalThis as any).ng as NgGlobal;
+    const providers = walkProviders(ng, walkInjectors(ng, walkDom(root)));
     return {
         providers: providers.flatMap((tree) => {
             return tree.map(({ element, providers }) => ({
@@ -46,7 +42,7 @@ function walkDom(root: Element): Tree<Element> {
     );
 }
 
-function walkInjectors(elements: Tree<Element>):
+function walkInjectors(ng: NgGlobal, elements: Tree<Element>):
         Array<Tree<{ element: Element, injector: Injector }>> {
     return elements.optionalMap((element) => {
         const injector = ng.getInjector(element);
@@ -56,8 +52,10 @@ function walkInjectors(elements: Tree<Element>):
     });
 }
 
-function walkProviders(forest: Array<Tree<{ element: Element, injector: Injector }>>):
-        Array<Tree<{ element: Element, providers: ProviderRecord[] }>> {
+function walkProviders(
+    ng: NgGlobal,
+    forest: Array<Tree<{ element: Element, injector: Injector }>>,
+): Array<Tree<{ element: Element, providers: ProviderRecord[] }>> {
     return forest.flatMap((tree) => {
         return tree.optionalMap(({ element, injector }) => {
             const providers = ng.ɵgetInjectorProviders(injector);

@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { Service1 } from './child1';
 
-class Service5 {}
+export class Service5 {}
 
 @Component({
     selector: 'app-child-5',
@@ -14,4 +15,12 @@ class Service5 {}
         },
     ],
 })
-export class Child5 {}
+export class Child5 {
+    constructor() {
+        try {
+            inject(Service1);
+        } catch (err) {
+            console.error(err);
+        }
+    }
+}

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Child5 } from './child5';
 import { Child6 } from './child6';
 
-class Service2 {}
+export class Service2 {}
 
 @Component({
     selector: 'app-child-2',

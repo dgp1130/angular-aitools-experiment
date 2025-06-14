@@ -13,6 +13,7 @@ export class App implements OnInit, OnDestroy {
   protected readonly suggestions = Object.freeze([
     'What can I inject from `child-3`?',
     'Why can\'t I inject `Service1` from `child-5`?',
+    'Why am I getting this error?',
   ]);
 
   private readonly ai = inject(AI);
@@ -21,6 +22,7 @@ export class App implements OnInit, OnDestroy {
 
   protected readonly response = signal<string>('');
   protected readonly analysis = signal<Analysis | undefined>(undefined);
+  protected readonly logs = signal<unknown[][]>([]);
 
   private messageSub?: Subscription;
 
@@ -31,6 +33,12 @@ export class App implements OnInit, OnDestroy {
       switch (msg.type) {
         case 'analysis': {
           this.analysis.set((msg as unknown as {analysis: Analysis}).analysis);
+          break;
+        } case 'logs': {
+          this.logs.update((logs) => [
+            ...logs,
+            (msg as unknown as {args: unknown[]}).args,
+          ]);
           break;
         } default: {
           console.error(`Unknown message type: ${msg.type}`);
@@ -55,7 +63,7 @@ export class App implements OnInit, OnDestroy {
     const prompt = formData.get('prompt')!;
 
     this.response.set(''); // Clear any previous prompt.
-    for await (const chunk of this.ai.generate(prompt.toString(), analysis)) {
+    for await (const chunk of this.ai.generate(prompt.toString(), analysis, this.logs())) {
       this.response.update((res) => res + chunk);
     }
   }

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-class Service6 {}
+export class Service6 {}
 
 @Component({
     selector: 'app-child-6',
