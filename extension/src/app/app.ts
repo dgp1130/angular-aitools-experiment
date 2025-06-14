@@ -48,6 +48,7 @@ export class App implements OnInit, OnDestroy {
     const formData = new FormData(form);
     const prompt = formData.get('prompt')!;
 
+    this.response.set(''); // Clear any previous prompt.
     for await (const chunk of this.ai.generate(prompt.toString(), analysis)) {
       this.response.update((res) => res + chunk);
     }
