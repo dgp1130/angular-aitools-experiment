@@ -7,6 +7,11 @@ export class Service3 {}
     template: `
         <div>Child 3</div>
     `,
+    styles: `
+        :host {
+            display: block;
+        }
+    `,
     providers: [
         {
             provide: Service3,

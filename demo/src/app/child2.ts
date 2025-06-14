@@ -13,6 +13,15 @@ export class Service2 {}
         <app-child-6 />
     `,
     imports: [Child5, Child6],
+    styles: `
+        :host {
+            display: block;
+        }
+
+        app-child-5, app-child-6 {
+            margin-left: 1rem;
+        }
+    `,
     providers: [
         {
             provide: Service2,
