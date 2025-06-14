@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { GoogleGenAI } from '@google/genai';
 import { API_KEY } from './.api_key';
 import { Analysis } from '../injection/analyzer';
+import { Tree } from '../injection/tree';
 
 @Injectable({ providedIn: 'root' })
 export class AI {
@@ -31,9 +32,9 @@ particular Angular app running in development mode with extra diagnostics provid
 to you. Based on this information, you can provide analysis of the page state and
 offer debugging or performance suggestions to the user.
 
-The page contains the following elements which themselves provide a few injection
-tokens. Use this information to answer questions about the application's injection
-hierarchy.
+The page contains the following Angular components in a tree structure, each of
+which provides a few injection tokens. Use this information to answer questions
+about the application's injection hierarchy.
 
 ${printAnalysis(analysis)}
 
@@ -44,7 +45,13 @@ ${prompt}
 }
 
 function printAnalysis(analysis: Analysis): string {
-    return analysis.providers.map(({ tagName, providers }) => `
+    const providers = analysis.providers
+        .map((serializedTree) => Tree.deserialize(
+            serializedTree,
+            (serialized) => serialized as {tagName: string, providers: string[]},
+        ));
+
+    return providers.map((tree) => tree.print(({ tagName, providers }) => `
 ${tagName} provides ${providers.join(', ')}
-    `).join('\n');
+    `.trim())).join('\n');
 }

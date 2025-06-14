@@ -1,12 +1,15 @@
-import type { InjectionToken, Injector, Provider, Type } from '@angular/core';
+import type { InjectionToken, Injector, Type } from '@angular/core';
+import { type SerializedTree, Tree } from './tree.js';
 
 /** Stores the analysis about a particular frame. */
 export interface Analysis {
     /** Temporary test string. */
-    providers: Array<{
-        tagName: string,
-        providers: string[],
-    }>;
+    providers: Array<SerializedTree>;
+}
+
+export interface ProviderMetadata {
+    tagName: string;
+    providers: string[];
 }
 
 interface ProviderRecord {
@@ -22,37 +25,46 @@ const ng = (globalThis as any).ng as NgGlobal;
 
 /** Analyzes the current page. */
 export async function analyze(): Promise<Analysis> {
-    const roots = document.querySelectorAll('[ng-version]');
-    const providers = Array.from(walkProviders(walkInjectors(walkDom(roots))));
+    const root = document.querySelector('[ng-version]');
+    if (!root) throw new Error('Could not find Angular application.');
+
+    const providers = walkProviders(walkInjectors(walkDom(root)));
     return {
-        providers: providers.map(([el, providers]) => ({
-            tagName: el.tagName.toLowerCase(),
-            providers: providers.map((provider) => getProviderName(provider.token)),
-        })),
+        providers: providers.flatMap((tree) => {
+            return tree.map(({ element, providers }) => ({
+                tagName: element.tagName.toLowerCase(),
+                providers: providers.map((provider) => getProviderName(provider.token)),
+            })).serialize(({ tagName, providers }) => ({ tagName, providers }));
+        }),
     };
 }
 
-function* walkDom(roots: Iterable<Element>): Generator<Element, void, void> {
-    for (const root of roots) {
-        yield root;
-        yield* walkDom(root.children);
-    }
+function walkDom(root: Element): Tree<Element> {
+    return new Tree(
+        root,
+        Array.from(root.children, (child) => walkDom(child))
+    );
 }
 
-function* walkInjectors(elements: Iterable<Element>):
-        Generator<[el: Element, injector: Injector], void, void> {
-    for (const el of elements) {
-        const injector = ng.getInjector(el);
-        if (injector) yield [el, injector];
-    }
+function walkInjectors(elements: Tree<Element>):
+        Array<Tree<{ element: Element, injector: Injector }>> {
+    return elements.optionalMap((element) => {
+        const injector = ng.getInjector(element);
+        if (!injector) return undefined;
+
+        return { element, injector };
+    });
 }
 
-function* walkProviders(injectors: Iterable<[el: Element, injector: Injector]>):
-        Generator<[el: Element, providers: ProviderRecord[]], void, void> {
-    for (const [el, injector] of injectors) {
-        const providers = ng.ɵgetInjectorProviders(injector);
-        if (providers.length !== 0) yield [el, providers];
-    }
+function walkProviders(forest: Array<Tree<{ element: Element, injector: Injector }>>):
+        Array<Tree<{ element: Element, providers: ProviderRecord[] }>> {
+    return forest.flatMap((tree) => {
+        return tree.optionalMap(({ element, injector }) => {
+            const providers = ng.ɵgetInjectorProviders(injector);
+            if (providers.length === 0) return undefined;
+            return { element, providers };
+        });
+    });
 }
 
 function getProviderName(token: Type<unknown> | InjectionToken<unknown>): string {
