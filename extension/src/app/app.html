@@ -4,8 +4,20 @@
 </div>
 
 <form action="#" (submit)="submit($event)">
-    <textarea name="prompt" aria-label="Prompt"></textarea>
+    <textarea #prompt name="prompt" aria-label="Prompt"></textarea>
+
+    <div>Suggested prompts:</div>
+    <ul id="suggestions">
+        @for (suggestion of suggestions; track $index) {
+            <li>
+                <button type="button" (click)="applySuggestion(suggestion)">
+                    {{suggestion}}
+                </button>
+            </li>
+        }
+    </ul>
+
     <button type="submit" [disabled]="!analysis()">Submit</button>
 </form>
 
-<article><pre>{{response()}}</pre></article>
+<article><pre id="response">{{response()}}</pre></article>

@@ -16,6 +16,16 @@ textarea {
     resize: none;
 }
 
-article {
+#suggestions button {
+    /* Make the buttons look like links. */
+    appearance: none;
+    background: none;
+    border: none;
+    text-decoration: underline;
+    color: blue;
+}
+
+#response {
     font-family: monospace;
+    white-space: pre-line;
 }

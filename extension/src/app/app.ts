@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, ElementRef, inject, OnDestroy, OnInit, signal, viewChild } from '@angular/core';
 import { MessageBus } from '../message_bus';
 import { Subscription } from 'rxjs';
 import { Analysis } from '../../injection/analyzer';
@@ -10,8 +10,14 @@ import { AI } from '../ai';
   styleUrl: './app.css'
 })
 export class App implements OnInit, OnDestroy {
+  protected readonly suggestions = Object.freeze([
+    'What can I inject from `child-3`?',
+    'Why can\'t I inject `Service1` from `child-5`?',
+  ]);
+
   private readonly ai = inject(AI);
   private readonly messageBus = inject(MessageBus);
+  private readonly promptTextarea = viewChild.required<ElementRef<HTMLTextAreaElement>>('prompt');
 
   protected readonly response = signal<string>('');
   protected readonly analysis = signal<Analysis | undefined>(undefined);
@@ -52,5 +58,9 @@ export class App implements OnInit, OnDestroy {
     for await (const chunk of this.ai.generate(prompt.toString(), analysis)) {
       this.response.update((res) => res + chunk);
     }
+  }
+
+  protected applySuggestion(suggestion: string): void {
+    this.promptTextarea().nativeElement.value = suggestion;
   }
 }
