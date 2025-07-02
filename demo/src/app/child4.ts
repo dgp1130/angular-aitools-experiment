@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { TestService } from './test-service';
 
 export class Service4 {}
 
@@ -17,6 +18,16 @@ export class Service4 {}
             provide: Service4,
             useClass: Service4,
         },
+        {
+            provide: TestService,
+            useClass: TestService,
+        },
     ],
 })
-export class Child4 {}
+export class Child4 {
+    private readonly testService = inject(TestService);
+
+    ngOnInit(): void {
+        console.log(`Child4 is using \`TestService\` #${this.testService.id}.`);
+    }
+}

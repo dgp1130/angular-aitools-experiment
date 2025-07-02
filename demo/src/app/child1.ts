@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Child3 } from './child3';
 import { Child4 } from './child4';
+import { TestService } from './test-service';
 
 export class Service1 {}
 
